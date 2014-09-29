@@ -122,4 +122,31 @@ describe "Dialy" do
       lambda { Dialy::Number.new('003834-123456') }.should raise_error(Dialy::UnknownCountryCode)
     end
   end
+
+  describe 'US' do
+    before :each do
+      Dialy::Config[:default_country_code] = 1
+      @expected = '+1 800 555 1212'
+    end
+    
+    it "should format hyphenated number" do
+      Dialy::Number.new('1-800-555-1212').to_s.should == @expected
+    end
+    
+    it "should format hyphenated number without leading 1" do
+      Dialy::Number.new('800-555-1212').to_s.should == @expected
+    end
+    
+    it "should format paren-hyphenated number" do
+      Dialy::Number.new('1 (800) 555-1212').to_s.should == @expected
+    end
+    
+    it "should format paren-hyphenated number without leading 1" do
+      Dialy::Number.new('(800) 555-1212').to_s.should == @expected
+    end
+    
+    it "should add spaces to monolithic E.123" do
+      Dialy::Number.new('+18005551212').to_s.should == @expected
+    end
+  end
 end
